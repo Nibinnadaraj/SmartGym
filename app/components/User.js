@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   View,
-  Image,
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
   Linking,
+  Alert,
 } from 'react-native';
 import { Avatar,
   Divider,
@@ -25,6 +25,21 @@ export default class User extends Component{
 
     this.arrayHolder = [];
 
+}
+
+deleteItem(id){
+
+  return fetch('http://192.168.43.104/phpserver/index.php?purpose=delete&&id='+id)
+  .then(response => response.json())
+  .then(responseJson => {
+   alert(responseJson);
+   this.props.navigation.navigate('Dashboard')
+  })
+  .catch(error => {
+    console.error(error);
+
+  });
+  
 }
 
 
@@ -90,8 +105,7 @@ contentContainerStyle={styles.scroller}>
       size="xlarge"
         rounded
         source={{
-          uri:
-            'http://192.168.43.104/phpserver/assets/memberimages/user.png',
+          uri:this.state.dataSource[0]['picture'],
         }}
       />
       </View>
@@ -136,7 +150,7 @@ contentContainerStyle={styles.scroller}>
         }
         }
         >
-        <Icon name ='md-call' size={30}/>
+        <Icon name ='md-call' size={40}/>
         </TouchableOpacity>
 
         <TouchableOpacity 
@@ -147,7 +161,7 @@ contentContainerStyle={styles.scroller}>
           
         }
         >
-        <Icon name ='logo-whatsapp' size={30}/>
+        <Icon name ='logo-whatsapp' size={40}/>
         </TouchableOpacity>
 
       </View>
@@ -162,6 +176,31 @@ contentContainerStyle={styles.scroller}>
         }}
         >
           <Text h3>Edit Info <Icon name ='ios-settings' size={30}/></Text>
+        </TouchableOpacity>
+
+      </View>
+
+      <View style={styles.packageinfo}>
+        <TouchableOpacity
+        onPress ={() => {
+
+            Alert.alert(
+              'Delete Mamber',
+              'Are You Sure To Delete : ' + this.state.dataSource[0]['name'],
+              [
+                {
+                  text: 'Cancel',
+                  onPress: () => console.log('Cancel Pressed'),
+                  style: 'cancel',
+                },
+                {text: 'Okay', onPress: () => this.deleteItem(this.state.dataSource[0]['id'])},
+              ],
+              {cancelable: false},
+            );
+
+        }}
+        >
+          <Text h3>Delete <Icon name ='ios-trash' size={30}/></Text>
         </TouchableOpacity>
 
       </View>

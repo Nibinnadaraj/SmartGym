@@ -16,6 +16,7 @@ import MemberDetails from './app/components/MemberDetails';
 import User from './app/components/User';
 import EditUser from './app/components/EditUser';
 import Settings from './app/components/Settings';
+import PackageList from './app/components/PackageList';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 
@@ -30,6 +31,30 @@ return(
 
 
 }
+
+const ProfileStack = createStackNavigator({
+    GymProfile : {
+        screen : GymProfile,
+        navigationOptions: {
+            header: null //Need to set header as null.
+        }
+    },
+    PackageList :{
+        screen : PackageList,
+        navigationOptions: {
+            header: null //Need to set header as null.
+        }
+    },
+        AddPackage :{
+            screen : AddPackage,
+            navigationOptions: {
+                header: null //Need to set header as null.
+            }
+
+    },
+
+});
+
 const UserStack = createStackNavigator({
     User : { 
         screen : User,
@@ -81,10 +106,34 @@ const DashboardStack = createStackNavigator({
 
 
 const MainTabNavigator = createBottomTabNavigator({
-    GymProfile,
-    DashboardStack,
-    AllMemberList
-
+    ProfileStack :{
+        screen : ProfileStack,
+        navigationOptions: {
+            tabBarLabel:"My Gym",
+            tabBarIcon: ({ tintColor }) => (
+              <Icon name="ios-information-circle" size={20}/>
+            )
+          }
+    },
+    
+    DashboardStack :{
+        screen : DashboardStack,
+        navigationOptions: {
+            tabBarLabel:"Dashboard",
+            tabBarIcon: ({ tintColor }) => (
+              <Icon name="ios-menu" size={20}/>
+            )
+          }
+    },
+    AddMember : {
+        screen : AddMember,
+        navigationOptions: {
+            tabBarLabel:"Member",
+            tabBarIcon: ({ tintColor }) => (
+              <Icon name="md-person-add" size={20}/>
+            )
+          }
+    },
 },{
     navigationOptions : ({navigation}) => {
         const {routeName} = navigation.state.routes[navigation.state.index];

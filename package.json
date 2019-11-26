@@ -16,7 +16,8 @@
     "react-native-image-picker": "^1.1.0",
     "react-native-reanimated": "^1.3.0",
     "react-native-vector-icons": "^6.6.0",
-    "react-navigation": "^3.0.8"
+    "react-navigation": "^3.0.8",
+    "rn-fetch-blob": "github:joltup/rn-fetch-blob"
   },
   "devDependencies": {
     "@babel/core": "7.6.0",

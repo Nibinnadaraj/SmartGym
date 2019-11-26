@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
         paddingRight: 5,
     },
     scroller:{
-        backgroundColor: '#1c2526',
+        backgroundColor: '#dfdfdf',
         paddingVertical: 20,
     },
 
@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
 
     },
     headingText:{
-      color:"white",
+      color:"#363636",
         fontWeight:"bold",
         fontSize:20,
     },

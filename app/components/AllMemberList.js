@@ -5,12 +5,13 @@ import {
     View,
     FlatList,
     ActivityIndicator,
-    TextInput
+    Alert,
 
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import {SearchBar, ListItem} from 'react-native-elements';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 
 export default class AllMemberList extends Component{
@@ -25,6 +26,21 @@ export default class AllMemberList extends Component{
 
       this.arrayHolder = [];
 
+  }
+
+
+  deleteItem(id){
+
+    return fetch('http://192.168.43.104/phpserver/index.php?purpose=delete&&id='+id)
+    .then(response => response.json())
+    .then(responseJson => {
+     alert(responseJson);
+    })
+    .catch(error => {
+      console.error(error);
+
+    });
+    
   }
 
  
@@ -273,10 +289,32 @@ render(){
           });
         }
       }              
-        roundAvatar              
+        leftAvatar={{ source: { uri: item.picture } }}              
         title={item.name}  
-        subtitle={item.phone}                           
-        avatar={{ uri: item.picture.thumbnail }}   
+        subtitle={item.phone}       
+        rightIcon ={<TouchableOpacity
+        onPress = {() => { 
+
+          Alert.alert(
+            'Delete Mamber',
+            'Are You Sure To Delete : ' + item.name,
+            [
+              {
+                text: 'Cancel',
+                onPress: () => console.log('Cancel Pressed'),
+                style: 'cancel',
+              },
+              {text: 'Okay', onPress: () => this.deleteItem(item.id)},
+            ],
+            {cancelable: false},
+          );
+          
+
+
+         }}
+        >
+          <Icon name = 'ios-trash' size={30} />
+        </TouchableOpacity>}                
         containerStyle={{ borderBottomWidth: 0 }} 
       />          
     )}          

@@ -69,10 +69,8 @@ import {createSwitchNavigator,createAppContainer} from 'react-navigation';
         })
         .then((response) => response.json())
         .then((res) => { 
-            if( res.success === true){
-                
-                AsyncStorage.setItem('username', res.user);
-                AsyncStorage.setItem('gymname', res.gymname);
+            if( res.success === true){ 
+                AsyncStorage.setItem('user', JSON.stringify(res));
                 this.props.navigation.navigate ('Dashboard');
             }
             else {

@@ -13,6 +13,7 @@ import {
 import ImagePicker from 'react-native-image-picker';
 import DatePicker from 'react-native-datepicker';
 import Icon from 'react-native-vector-icons/Ionicons';
+import RNFetchBlob from 'rn-fetch-blob';
 export default class AddMember extends Component{
     constructor(props){
         super(props);
@@ -24,6 +25,7 @@ export default class AddMember extends Component{
             phone: '',
             admission_date: '',
             package: '',
+            gender : '',
             memberImage: null,
         }
     }
@@ -93,7 +95,7 @@ contentContainerStyle={styles.container}>
                                   }
                                   // ... You can check the source to find the other keys.
                                 }}
-                                onDateChange={(date) => {this.setState({date: date})}}
+                                onDateChange={(date) => {this.setState({admission_date: date})}}
                               />       
                                 
                 <View style={styles.textInput}>
@@ -106,6 +108,19 @@ contentContainerStyle={styles.container}>
             <Picker.Item label="Basic 300" value="300" />
             <Picker.Item label="Pro Cardio 600" value="600" />
             </Picker>
+
+
+            <Picker 
+                    selectedValue={this.state.gender} 
+            onValueChange={(itemValue, itemIndex) =>
+                this.setState({gender: itemValue})
+            }>
+            <Picker.Item value='' label='Gender'/>
+            <Picker.Item label="Male" value="Male" />
+            <Picker.Item label="Female" value="Female" />
+            </Picker>
+
+
             </View>
             
             
@@ -135,10 +150,10 @@ contentContainerStyle={styles.container}>
             } else if (response.error) {
               console.log('ImagePicker Error: ', response.error);
             }  else {
-              const source = { uri: response.uri };
-          
+              //const source = { uri: response.uri };
+              //const source = { uri: response };
               // You can also display the image using data:
-              // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+               const source = { uri: 'data:image/jpeg;base64,' + response.data };
           
               this.setState({
                 memberImage: source,
@@ -152,49 +167,74 @@ contentContainerStyle={styles.container}>
 
 
     addMember =() => {
-  this.upload('http://192.168.43.104/phpserver/index.php', {
-    file: {
-      name: this.state.name,
+
+      if(this.state.memberImage == null){
+        alert('Image Could Not Be Empty.!');
+      }else{
+        RNFetchBlob.fetch('POST', 'http://192.168.43.104/phpserver/index.php?purpose=adduser', {
+    Authorization : "Bearer access-token",
+    otherHeader : "foo",
+    'Content-Type' : 'multipart/form-data',
+  }, [
+    // custom content type
+    { name : 'memberImage', filename : this.state.name+'.jpg', type:'image/jpg', data: 'file://'+this.state.memberImage},
+    // elements without property `filename` will be sent as plain text
+    { name : 'name', data : this.state.name},
+    { name : 'info', data : JSON.stringify({
       address: this.state.address,
-      email: this.state.email,
-      phone: this.state.phone,
-      email: this.state.email,
-      admission_date: this.state.admission_date,
-      package:this.state.package,
-      memberImage: this.state.memberImage,
-    }
-    }).then(r => {
-    alert(r);
-    });    
-  }
+        email: this.state.email,
+        phone: this.state.phone,
+        admission_date: this.state.admission_date,
+        package:this.state.package,
+        gender:this.state.gender,       
+    })},
+  ]).then((resp) => {
+    alert(resp['data']);
+  }).catch((err) => {
+    // ...
+  })
 
-    upload(url, data) {
-      let options = {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        },
-        method: 'POST'
+
+
+        /*const fileURL = this.state.memberImage.uri;
+        const cleanURL = fileURL.replace("file://", "");*/
+    /*  const formData = new FormData();
+      let data =  {
+        purpose: 'adduser',
+        name: this.state.name,
+        address: this.state.address,
+        email: this.state.email,
+        phone: this.state.phone,
+        admission_date: this.state.admission_date,
+        package:this.state.package,
+        gender:this.state.gender,
       };
-    
-      options.body = new FormData();
       for (let key in data) {
-        options.body.append(key, data[key]);
+        formData.append(key, data[key]);
+        
       }
-    
-     try{
-      return fetch(url, options)
-      .then(response => {
-        return response.json()
-          .then(responseJson => {
-            alert('hello');
-            return responseJson;
-          });
-      });
 
-     } catch(e) {
-        return e;
-     }
-    }
+       formData.append("photo", {
+        uri:  this.state.memberImage.uri,
+        name: this.state.memberImage.uri.fileName,
+        type: this.state.memberImage.uri.type,
+      });
+      fetch("http://192.168.43.104/phpserver/index.php", {
+    method: "POST",
+    body: formData,
+  })
+    .then(function (response) {
+      alert(response['data']);
+    })
+    .catch(error => {
+      console.log("upload error", error);
+      alert(error);
+    });*/
+};
+
+
+
+  }
 
 }
 
@@ -212,7 +252,7 @@ const styles = StyleSheet.create(
     container: {
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#1c2526',
+        backgroundColor: '#ffffff',
         paddingLeft: 40,
         paddingRight: 40,
         paddingVertical: 20,
@@ -221,7 +261,7 @@ const styles = StyleSheet.create(
         alignSelf:"stretch",
         padding:8,
         marginBottom:5,
-        backgroundColor: '#fff',
+        backgroundColor: '#9c9b98',
         borderRadius:10,
     
     },
@@ -230,14 +270,14 @@ const styles = StyleSheet.create(
         width:240,
         padding:5,
         marginBottom:10,
-        backgroundColor: '#fff',
+        backgroundColor: '#9c9b98',
         borderRadius:10,
     
     },
     button:{
         alignSelf: 'stretch',
         alignItems: 'center',
-        backgroundColor : '#f0fafc',
+        backgroundColor : '#ff4545',
         padding:10,
         borderRadius:50,
        
